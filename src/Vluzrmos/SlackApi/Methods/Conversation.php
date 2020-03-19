@@ -6,7 +6,7 @@ use Vluzrmos\SlackApi\Contracts\SlackConversation;
 
 class Conversation extends SlackMethod implements SlackConversation
 {
-    protected $methodsGroup = 'conversation.';
+    protected $methodsGroup = 'conversations.';
 
     /**
      * This method archives a channel.
