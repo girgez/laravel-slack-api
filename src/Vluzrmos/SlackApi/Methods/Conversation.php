@@ -36,10 +36,12 @@ class Conversation extends SlackMethod implements SlackConversation
      * This method crate a channel with a given name.
      *
      * @param string $name Name of conversation to create
+     * @param string $is_private Create a private channel instead of a public one
+     * @param string $user_ids Required for workspace apps. A list of between 1 and 30 human users that will be added to the newly-created conversation. This argument has no effect when used by classic Slack apps.
      *
      * @return array
      */
-    public function create($name, $is_private, $user_ids)
+    public function create($name, $is_private = false, $user_ids = null)
     {
         return $this->method('create', compact('name', 'is_private', 'user_ids'));
     }
@@ -51,17 +53,17 @@ class Conversation extends SlackMethod implements SlackConversation
      * @see https://api.slack.com/methods/conversations.history
      *
      * @param string $channel Conversation to fetch history for.
-     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      * @param bool $inclusive Include messages with latest or oldest timestamp in results only when either timestamp is specified.
-     * @param int $latest End of time range of messages to include in results.
      * @param int $limit The maximum number of items to return.
+     * @param int $latest End of time range of messages to include in results.
      * @param int $oldest Start of time range of messages to include in results.
+     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      *
      * @return array
      */
-    public function history($channel, $cursor = null, $inclusive = false, $latest = null, $limit = 100, $oldest = 0)
+    public function history($channel, $inclusive = false, $limit = 100, $latest = null, $oldest = 0, $cursor = null)
     {
-        return $this->method('history', compact('channel', 'cursor', 'inclusive', 'latest', 'limit', 'oldest'), 'get');
+        return $this->method('history', compact('channel', 'cursor', 'inclusive', 'latest', 'limit', 'oldest'));
     }
 
     /**
@@ -77,7 +79,7 @@ class Conversation extends SlackMethod implements SlackConversation
      */
     public function info($channel, $include_locale = false, $include_num_members = false)
     {
-        return $this->method('info', compact('channel', 'include_locale', 'include_num_members'), 'get');
+        return $this->method('info', compact('channel', 'include_locale', 'include_num_members'));
     }
 
     /**
@@ -143,16 +145,16 @@ class Conversation extends SlackMethod implements SlackConversation
      *
      * @see https://api.slack.com/methods/conversations.list
      *
-     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
+     * @param string $types Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel, mpim, im
      * @param bool $exclude_archived Set to true to exclude archived channels from the list
      * @param int $limit The maximum number of items to return. Must be an integer no larger than 1000.
-     * @param string $types Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel, mpim, im
+     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      *
      * @return array
      */
-    public function list($cursor, $exclude_archived = false, $limit = 100, $types = 'public_channel')
+    public function list($types = 'public_channel', $exclude_archived = false, $limit = 100, $cursor = null)
     {
-        return $this->method('list', compact('cursor', 'exclude_archived', 'limit', 'types'), 'get');
+        return $this->method('list', compact('cursor', 'exclude_archived', 'limit', 'types'));
     }
 
     /**
@@ -161,14 +163,14 @@ class Conversation extends SlackMethod implements SlackConversation
      * @see https://api.slack.com/methods/conversations.members
      * 
      * @param int $channel ID of the conversation to retrieve members for.
-     * @param int $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      * @param int $limit The maximum number of items to return.
+     * @param int $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      * 
      * @return array
      */
-    public function members($channel, $cursor, $limit = 100)
+    public function members($channel, $limit = 100, $cursor = null)
     {
-        return $this->method('members', compact('channel', 'cursor', 'limit'), 'get');
+        return $this->method('members', compact('channel', 'cursor', 'limit'));
     }
 
     /**
@@ -177,12 +179,12 @@ class Conversation extends SlackMethod implements SlackConversation
      * @see https://api.slack.com/methods/conversations.open
      * 
      * @param string $channel Resume a conversation by supplying an im or mpim's ID. Or provide the users field instead.
-     * @param string $return_im Boolean, indicates you want the full IM channel definition in the response.
      * @param string $users Comma separated lists of users.
+     * @param string $return_im Boolean, indicates you want the full IM channel definition in the response.
      * 
      * @return array
      */
-    public function open($channel, $return_im, $users)
+    public function open($channel = null, $users = null, $return_im = false)
     {
         return $this->method('open', compact('channel', 'return_im', 'users'));
     }
@@ -212,17 +214,17 @@ class Conversation extends SlackMethod implements SlackConversation
      * 
      * @param string $channel Conversation ID to fetch thread from.
      * @param string $ts Unique identifier of a thread's parent message.
-     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      * @param bool $inclusive Include messages with latest or oldest timestamp in results only when either timestamp is specified.
-     * @param int $latest End of time range of messages to include in results.
      * @param int $limit The maximum number of items to return.
+     * @param int $latest End of time range of messages to include in results.
      * @param int $oldest Start of time range of messages to include in results.
+     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      * 
      * @return array
      */
-    public function replies($channel, $ts, $cursor, $inclusive = false, $latest = null, $limit = 10, $oldest = 0)
+    public function replies($channel, $ts, $inclusive = false, $limit = 10, $latest = null, $oldest = 0, $cursor = null)
     {
-        return $this->method('replies', compact('channel', 'ts', 'cursor', 'inclusive', 'latest', 'limit', 'oldest'), 'get');
+        return $this->method('replies', compact('channel', 'ts', 'cursor', 'inclusive', 'latest', 'limit', 'oldest'));
     }
 
     /**
@@ -274,14 +276,14 @@ class Conversation extends SlackMethod implements SlackConversation
      * 
      * @see https://api.slack.com/methods/users.conversations
      * 
-     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
-     * @param bool $exclude_archived Set to true to exclude archived channels from the list.
-     * @param int $limit The maximum number of items to return.
      * @param string $types Mix and match channel types by providing a comma-separated list of any combination of public_channel, private_channel, mpim, im
      * @param string $user Browse conversations by a specific user ID's membership.
+     * @param bool $exclude_archived Set to true to exclude archived channels from the list.
+     * @param int $limit The maximum number of items to return.
+     * @param string $cursor Paginate through collections of data by setting the cursor parameter to a next_cursor attribute returned by a previous request's response_metadata.
      */
-    public function usersConversations($cursor, $exclude_archived, $limit, $types, $user)
+    public function usersConversations($types = 'public_channel', $user = null, $exclude_archived = false, $limit = 100, $cursor = null)
     {
-        return call_user_func([$this->getApi(), 'get'], $this->methodsGroup . 'users.conversations', compact('cursor', 'exclude_archived', 'limit', 'types', 'user'));
+        return call_user_func([$this->getApi(), 'post'], $this->methodsGroup . 'users.conversations', compact('cursor', 'exclude_archived', 'limit', 'types', 'user'));
     }
 }
